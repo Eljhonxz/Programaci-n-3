@@ -1,0 +1,310 @@
+
+package util;
+import excepciones.ArchivoInvalidoException;
+import excepciones.PilaDeshacerVaciaException;
+import excepciones.HorarioConflictivoException;
+import excepciones.PreRequisitoNoAprobadoException;
+import excepciones.CupoLlenoException;
+import excepciones.EstudianteNoEncontradoException;
+import estructuras.sistemaUniversitario;
+import java.util.Scanner;
+public class Main {
+public static void main (String [] args){
+    Scanner teclado = new Scanner (System.in);
+    
+    sistemaUniversitario sistema = new sistemaUniversitario ();
+    
+    int opcion = 0;
+    
+    while (opcion != 8){
+            System.out.println("\n---Sistema universitario menu principal---");
+            System.out.println("1. Ir al modulo de estudiantes");
+            System.out.println("2. Ir al modulo de materias");
+            System.out.println("3. Ir al modulo de horarios");
+            System.out.println("4. Deshacer/Rehacer cambios");
+            System.out.println("5. Modulo de reportes academicos");
+            System.out.println("6. Rutas entre edificios (Dijkstra)");
+            System.out.println("7. Procesamiento Batch (Leer CSV)"); // NUEVO
+            System.out.println("8. Salir del sistema"); // 
+            System.out.print("Selecciona un modulo: ");
+        opcion = teclado.nextInt();
+        teclado.nextLine();
+        
+    switch (opcion){
+        case 1:
+            menuEstudiantes(teclado, sistema);  //SUB MENU
+            break;
+        case 2 : 
+            menuMaterias(teclado, sistema);
+            break;
+        case 3: 
+            menuHorarios(teclado, sistema);
+            break;
+        case 4:
+            menuDeshacerRehacer(teclado, sistema);
+            break;
+        case 5:
+            menuReportes(teclado, sistema);
+            break;
+        case 6:
+            menuRutas(teclado, sistema);
+            break;
+        case 7: 
+                    try {
+                        // llamo al archivo csv
+                        sistema.procesarArchivoBatch("inscripciones.csv");
+                    } catch (ArchivoInvalidoException e) {
+                        System.out.println("ERROR DE ARCHIVO: " + e.getMessage());
+                    }
+                    break;    
+        case 8: 
+            System.out.println("Saliendo del sistema");
+            break;
+        default:
+            System.out.println("Opción invalida, intente de nuevo");
+            break; 
+    }} teclado.close();    
+    
+}
+// sub menu metodos
+    public static void menuEstudiantes (Scanner teclado, sistemaUniversitario sistema){
+        int subOpcion = 0;
+        
+        while(subOpcion != 6 ){
+            System.out.println("---MODULO DE LOS ESTUDIANTES---");
+            System.out.println("1. Registrar estudiante");
+            System.out.println("2. Buscar estudiante por ID");
+            System.out.println("3. Listar todos los estudiantes");
+            System.out.println("4. Eliminar estudiante");
+            System.out.println("5. Registrar profesor");
+            System.out.println("6. Volver al menu principal");
+            System.out.println("Elija una opción: ");
+            subOpcion = teclado.nextInt();
+            teclado.nextLine();
+            
+            
+        switch (subOpcion){
+            case 1: 
+                sistema.registrarEstudiante(teclado);
+                break;
+            case 2:
+                //Atrapar el error
+                try{
+                    sistema.buscarEstudiante(teclado);
+                }
+                    catch(EstudianteNoEncontradoException e){
+                        System.out.println("Error: " + e.getMessage());         
+                }  break;
+            case 3:
+                sistema.listarEstudiantes();
+                break;
+            case 4:
+                try{
+                 sistema.eliminarEstudiante(teclado);   
+                }
+                catch(EstudianteNoEncontradoException e){
+                    System.out.println("ERROR: " + e.getMessage());
+                }
+                break;
+            case 5:
+                sistema.registrarProfesor(teclado); 
+                break;
+            case 6: 
+                System.out.println("Volviendo al menu principal...");
+                break;
+            default: 
+                System.out.println("Opción invalida, intente de nuevo");
+                break;
+        }
+            
+        }
+        
+    }
+    
+    public static void menuMaterias (Scanner teclado, sistemaUniversitario sistema){
+        int subOpcion = 0;
+        
+        while(subOpcion != 5 ){
+            System.out.println("---MODULO DE MATERIAS---");
+            System.out.println("1. Crear materia");
+            System.out.println("2. Listar materias");
+            System.out.println("3. Inscribir estudiante en una materia");
+            System.out.println("4. Agregar pre-requisito a una materia");
+            System.out.println("5. Volver al menu principal");
+            System.out.println("Elija una opción: ");
+            subOpcion = teclado.nextInt();
+            teclado.nextLine();
+            
+            
+        switch (subOpcion){
+            case 1: 
+                sistema.crearMateria(teclado);
+                break;
+            case 2:
+                sistema.listarMaterias();
+                break;
+            case 3:
+                try{
+                sistema.inscribirEstudianteEnMateria(teclado);
+                }
+                catch(EstudianteNoEncontradoException|CupoLlenoException|PreRequisitoNoAprobadoException e){
+                    System.out.println("Error de inscripción: " + e.getMessage());
+                }
+                break;
+            case 4:
+                sistema.agregarPrerequisitoAMateria(teclado);
+                break;
+            case 5: 
+                System.out.println("Volviendo al menu principal...");
+                break;
+            default: 
+                System.out.println("Opción invalida, intente de nuevo");
+                break;
+        }
+            
+        }
+        
+    }
+    
+    public static void menuHorarios(Scanner teclado, sistemaUniversitario sistema) {
+        int opcionSub = 0;
+        while (opcionSub != 3) {
+            System.out.println("\n--- MÓDULO DE HORARIOS ---");
+            System.out.println("1. Crear Aula");
+            System.out.println("2. Reservar Horario en Aula");
+            System.out.println("3. Volver al menú principal");
+            System.out.print("Elige una opción: ");
+            
+            opcionSub = teclado.nextInt();
+            teclado.nextLine();
+
+            switch (opcionSub) {
+                case 1: sistema.crearAula(teclado); break;
+                case 2: 
+                    try{
+                    sistema.reservarAula(teclado);}
+                   catch (HorarioConflictivoException e) {
+                    System.out.println("ERROR DE HORARIO: " + e.getMessage());
+                }
+                    break;
+                case 3: System.out.println("Volviendo al menú principal..."); break;
+                default: System.out.println("Opción inválida, intente de nuevo");
+            }
+        }
+    }
+    
+    public static void menuDeshacerRehacer (Scanner teclado, sistemaUniversitario sistema){
+        int opcionSub = 0;
+        while (opcionSub !=3){
+            System.out.println("---Rehacer y Deshacer---");
+            System.out.println("1. Deshacer el ultimo cambio");
+            System.out.println("2. Rehacer el ultimo cambio");
+            System.out.println("3. Volver al menu principal");
+            System.out.println("Elige una opción: ");
+            opcionSub = teclado.nextInt();
+            teclado.nextLine();
+            
+            
+        switch(opcionSub){
+            case 1: 
+                try{
+                    sistema.deshacer();
+                }
+                catch(PilaDeshacerVaciaException e){
+                    System.out.println("ERROR " + e.getMessage());
+                    
+                }
+                break;
+            case 2:
+                try {
+                    sistema.rehacer();
+                    } 
+                catch (PilaDeshacerVaciaException e) {
+                        System.out.println("ERROR: " + e.getMessage());
+                    }
+                break;
+            case 3: 
+                System.out.println("Volviendo al menu principal...");
+                break;
+            default:
+                System.out.println("Opción invalida, intente de nuevo");
+                break;
+        }    
+        }
+    }
+    
+    public static void menuReportes(Scanner teclado, sistemaUniversitario sistema){
+    int opcionSub = 0;
+    while(opcionSub !=4){
+        
+        System.out.println("---Menu de reportes---");
+        System.out.println("1. Registrar una nota ");
+        System.out.println("2. Generar reporte de un estudiante");
+        System.out.println("3. Ver reporte anterior (Atrás)");
+        System.out.println("4. Volver al menu principal");
+        System.out.print("Elige una opción: ");
+        
+        opcionSub = teclado.nextInt();
+        teclado.nextLine();
+        
+    switch(opcionSub){
+        case 1:
+            try {
+                sistema.registrarNotaEstudiante(teclado);
+                }
+            catch(EstudianteNoEncontradoException e) {
+                System.out.println("ERROR: " + e.getMessage());
+                    }
+            break;
+        
+        case 2: 
+                    try {
+                        sistema.generarReporteEstudiante(teclado);
+                    } catch (EstudianteNoEncontradoException e) {
+                        System.out.println("ERROR: " + e.getMessage());
+                    }
+                    break;
+                case 3: 
+                    try {
+                        sistema.verReporteAnterior();
+                    } catch (PilaDeshacerVaciaException e) {
+                        System.out.println("ERROR: " + e.getMessage());
+                    }
+                    break;
+                case 4:
+                    System.out.println("Volviendo al menu principal...");
+                    break;
+                default: 
+                    System.out.println("Opción inválida, intente de nuevo");
+                    break;
+    }
+    }
+    }
+    public static void menuRutas(Scanner teclado, sistemaUniversitario sistema) {
+        int opcionSub = 0;
+        while (opcionSub != 3) {
+            System.out.println("\n--- MÓDULO DE RUTAS ---");
+            System.out.println("1. Agregar conexión entre edificios");
+            System.out.println("2. Calcular ruta más corta");
+            System.out.println("3. Volver al menu principal");
+            System.out.print("Elige una opción: ");
+            
+            opcionSub = teclado.nextInt();
+            teclado.nextLine();
+
+            switch (opcionSub) {
+                case 1: 
+                    sistema.agregarConexion(teclado); 
+                    break;
+                case 2: 
+                    sistema.calcularRutaMasCorta(teclado); 
+                    break;
+                case 3: 
+                    System.out.println("Volviendo al menu principal..."); 
+                    break;
+                default: 
+                    System.out.println("Opción inválida.");
+            }
+        }
+    }
+}
