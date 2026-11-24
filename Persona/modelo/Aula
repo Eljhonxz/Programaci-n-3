@@ -1,0 +1,67 @@
+package modelo;
+
+import excepciones.HorarioConflictivoException;
+
+
+public class Aula {
+private String nombreAula;
+// El horario dias y horas
+private boolean [][] horario;
+
+
+public Aula (String nombreAula){
+    this.nombreAula = nombreAula;
+  // Al crear el aula, la matriz se llena de "false" (todo está libre)
+    this.horario = new boolean [7][24];
+}
+
+public String getNombreAula (){
+    return nombreAula;
+}
+
+//Metodo para consultar un aula
+public boolean consultarDisponibilidad (int dia, int hora) {
+     // Si la posición es false, significa que está libre. Si es true, está ocupada.
+    return horario[dia][hora]; 
+}
+
+// Metodo para reservar en ela aula
+public void reservar (int dia, int hora, int duracion)throws HorarioConflictivoException{
+//Duracion es lo que va a durar en el aula
+    
+// Los días son fijos
+
+//Verificar que TODAS las horas que pueda necesitar estén libres
+
+    for (int i = hora; i < hora + duracion; i++) {
+        //Empiezo desde una hora especifica
+        //Llego hasta las horas que quiero ocupar por duracion
+        
+        
+        // Un "true" (ocupado), lerror y cancelamiento de la reserva
+        if(horario[dia][i] == true){
+            //Lanzar el error
+            throw new HorarioConflictivoException("El aula ya está ocupada a las " + i + ":00");
+        } 
+    }
+    
+    // Si no hay problema reservo
+    for (int i = hora; i < hora + duracion; i++) {
+        //ProcedO a ocupar (poner en true) las horas.
+        horario[dia][i] = true; //Lo ocupo yo
+    }
+    System.out.println("Reserva exitosa: " + nombreAula + " El día: " + dia + " desde las " + hora + ":00 por " + duracion + " horas.");   
+}
+
+//Metodo para liberar el aula
+
+public void liberar (int dia, int hora, int duracion){
+    for (int i = hora; i < hora + duracion; i++) {
+        //Procedo a desocupar (poner en false) las horas.
+        horario[dia][i] = false; //queda libre
+    }
+    
+}
+
+    
+}
