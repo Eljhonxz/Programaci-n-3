@@ -1,0 +1,115 @@
+package modelo;
+import modelo.Persona;
+import java.util.LinkedList;
+
+public class Estudiante extends Persona {   //Conexion para heredar
+    private int semestre;
+    private Double [][] notas;
+    private LinkedList<String> historialMaterias;
+    
+ public Estudiante(String name, String id, String email , int semestre) {
+        super(name, id, email); //Padre
+        this.semestre = semestre;
+        this.notas = new Double[10][20];
+        this.historialMaterias = new LinkedList <>();
+    }
+ 
+ public int getSemestre () {
+     return semestre;
+ }
+ 
+ public void setSemestre (int semestre){
+     this.semestre = semestre;
+ }
+ 
+ 
+ //Metodo para agregar una materia a las materias
+ 
+ public void AgregarMateria (String nombreMateria){
+     historialMaterias.add(nombreMateria);
+ }
+ 
+ 
+ //Metodo para las notas
+ 
+public void registrarNota(int numSemestre, int numMateria, double nota) {
+ notas[numSemestre - 1][numMateria] = nota;     //Se pone -1 porque si se esocge uno seria la posicion 1 y java empieza sus posiciones en 0
+} 
+
+//
+
+public LinkedList<String> getHistorialMaterias() {
+    return historialMaterias; // Devuelve tu lista para que otras clases puedan usarla
+}
+
+//Promedio de un semestre
+public double calcularPromedioSemestre(int numSemestre){
+    int fila = numSemestre - 1;
+    double suma = 0;
+    int materias = 0;
+    
+   for (int j = 0; j < 20; j++) {
+            if (notas[fila][j] != null) { // Si la casilla no está vacía
+                suma += notas[fila][j];
+                materias++;
+            }
+        }
+        if (materias == 0) return 0.0;
+        return suma / materias;
+}
+//Promedio de toda la carrera
+public double calcularPromedioAcumulado(){
+    double suma = 0;
+    int materias = 0;
+    
+    for (int i = 0; i < 10; i++) {
+        for (int j = 0; j < 20; j++) {
+            if(notas[i][j] != null){
+                suma += notas[i][j];
+                materias++;
+                
+            }
+            
+        }
+        
+    }
+     if (materias == 0) return 0.0;
+        return suma / materias;
+}
+
+// Contar materias reprobadas (nota menor a 3.0)
+    public int contarReprobadas() {
+        int reprobadas = 0;
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 20; j++) {
+                if (notas[i][j] != null && notas[i][j] < 3.0) {
+                    reprobadas++;
+                }
+            }
+        }
+        return reprobadas;
+    }
+    
+     public Double getNota(int semestre, int materia) {
+        // El semestre va de 1 a 10, entonces restamos 1.
+        // La materia va de 0 a 19, entonces la usamos tal cual.
+        return notas[semestre - 1][materia]; 
+    }
+
+@Override       //Polimorfismo sobreescribir un metodo
+    public void mostrarInfo() {
+        System.out.println("\n--- DATOS DEL ESTUDIANTE ---");
+        System.out.println("ID: " + getId()); // getId() lo heredó de Persona
+        System.out.println("Nombre: " + getName());
+        System.out.println("Email: " + getEmail());
+        System.out.println("Semestre actual: " + semestre);
+        System.out.println("Materias en historial: " + historialMaterias.size());
+        
+    
+        System.out.println("----------------------------");
+ 
+ 
+    }
+    
+}
+
