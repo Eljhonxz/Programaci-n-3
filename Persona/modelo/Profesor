@@ -1,0 +1,30 @@
+package modelo;
+
+import modelo.Persona;
+
+public class Profesor extends Persona {
+    private String departamento;    // Area especifica que da, Rama de ingenieria
+    private double salario; 
+
+    public Profesor(String name, String id, String email, String departamento, double salario) {
+        super(name, id, email); // Llama al constructor de Persona
+        this.departamento = departamento;
+        this.salario = salario;
+    }
+
+    public String getDepartamento() { return departamento; }
+    public void setDepartamento(String departamento) { this.departamento = departamento; }
+
+    public double getSalario() { return salario; }
+    public void setSalario(double salario) { this.salario = salario; }
+
+    @Override
+    public void mostrarInfo() {
+        System.out.println("\n--- DATOS DEL PROFESOR ---");
+        System.out.println("ID: " + getId());
+        System.out.println("Nombre: " + getName());
+        System.out.println("Email: " + getEmail());
+        System.out.println("Departamento: " + departamento);
+        System.out.println("Salario: $" + salario);
+    }
+}
