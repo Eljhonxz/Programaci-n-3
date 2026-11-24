@@ -1,0 +1,144 @@
+package modelo;
+import excepciones.ColaDeEsperaVaciaException;
+import excepciones.CupoLlenoException;
+import excepciones.PreRequisitoNoAprobadoException;
+import modelo.Estudiante;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.ArrayDeque;
+
+
+public class Materia {
+    private int codigo;     //Atributos
+    private String nombreMat;
+    private int cuposMax;
+    private int cuposDisp;
+    private int creditos;
+    private LinkedList<Materia> PreRequisitos;      //Lista de prequisitos
+    private Queue<Estudiante>  ColaDeEspera;    //Cola 
+    
+public Materia (int codigo, String nombreMat, int cuposMax, int creditos ){
+this.codigo = codigo;
+this.nombreMat = nombreMat;
+this.cuposMax = cuposMax;
+this.cuposDisp = cuposMax;  //Al ser nuevo los cupos disponibles son igual al maximo
+this.creditos = creditos;
+this.PreRequisitos = new LinkedList<>();    //Se completan
+this.ColaDeEspera = new ArrayDeque <>();
+}    
+
+public int getCodigo () {
+    return codigo;
+}
+
+public void setCodigo (int codigo){
+this.codigo = codigo;    
+}
+
+public String getNombreMat () {   
+    return nombreMat;
+}
+
+public void setNombreMat (String nombreMat){
+    this.nombreMat = nombreMat;  
+}
+
+public int getCuposDisp () {
+    return cuposDisp;
+}
+
+public void setCuposDisp (int cuposDisp){
+    this.cuposDisp = cuposDisp;
+}
+
+public int getCreditos () {
+    return creditos;
+}
+
+public void setCreditos (int creditos){
+    this.creditos = creditos;  
+}
+
+// No hay metodos para las pilas y colas porque ellas cuentan con sus propios metodos
+
+//Metodos de prerequisitos
+
+public void agregarPreRequisitos (Materia materiaRequerida){    //Preguntar para despues
+    PreRequisitos.add(materiaRequerida);
+    
+}
+
+//Verificar si el estudiante aprobo las materias requeridas
+
+public boolean cumplePrequisitos (Estudiante est){
+    for (int i = 0; i < PreRequisitos.size(); i++) {
+        Materia req = PreRequisitos.get(i);
+// Si el historial del estudiante NO contiene el nombre de la materia requerida
+if (!est.getHistorialMaterias().contains(req.getNombreMat())) {
+    return false;   // Falta un prerequisito
+        } }
+    return true; // Tiene todos los prerequisitos
+}
+
+public void agregarEstudianteAcola (Estudiante est){
+    ColaDeEspera.offer(est);    //Metodo de colas
+    
+}
+
+public Estudiante sacarEstudiante() throws ColaDeEsperaVaciaException{
+    if(ColaDeEspera.isEmpty()){
+        throw new ColaDeEsperaVaciaException("No hay estudiantes en la cola de espera");         
+    }
+    return ColaDeEspera.poll();     //Saca al primero de la fila
+}
+
+//Metodos para llenar la información de los estudiantes
+
+//Throws porque el metodo puede (lanzar) errores
+public void inscribirEstudiante (Estudiante est) throws PreRequisitoNoAprobadoException, CupoLlenoException {
+    
+// Validar preRequisitos
+//No se inscribe si el estudiante no cumple con los prequisitos
+    if(!cumplePrequisitos(est)){
+        //Lanza el error en vez de imprimir con un sout
+       throw new PreRequisitoNoAprobadoException("Error el estudiante no cumple con los Pre-Requisitos"); 
+    }
+    
+    // si lo cumple
+    if(cuposDisp>0){
+    cuposDisp--;    //Le quito al contador
+    est.getHistorialMaterias().add(nombreMat);
+        System.out.println("Estudiante inscrito exitosamente");
+    }
+    
+    else{
+        //Llamo al metodo para la cola
+        agregarEstudianteAcola(est);    //Primero hago esto si no el estudiante nunca entra a la cola de espera
+        throw new CupoLlenoException("Materia llena. Enviado a la cola de espera ");
+    }
+}
+
+public void liberarCupo ()throws ColaDeEsperaVaciaException{
+    cuposDisp++;
+    
+    if(!ColaDeEspera.isEmpty()){
+        //Llamo metodo para sacar un estudiante y reasignar uno nuevo
+        Estudiante afortunado = sacarEstudiante();
+        cuposDisp--;
+        afortunado.getHistorialMaterias().add(nombreMat);
+        System.out.println("Cupo reasignado automáticamente a: " + afortunado.getName());
+    }
+    else {
+        System.out.println("Cupo liberado.");
+    }
+    
+}
+
+   public void mostrarInfo() {
+        System.out.println("\n--- DATOS DE LA MATERIA ---");
+        System.out.println("Código: " + codigo);
+        System.out.println("Nombre: " + nombreMat);
+        System.out.println("Cupos: " + cuposDisp + "/" + cuposMax);
+        System.out.println("En cola de espera: " + ColaDeEspera.size() + " estudiantes.");
+    }
+}
