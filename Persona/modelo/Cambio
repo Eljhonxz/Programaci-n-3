@@ -1,0 +1,71 @@
+
+package modelo;
+
+import modelo.Materia;
+import modelo.Estudiante;
+
+public class Cambio {
+    //Tipos de cambios que el sistema puede recordar
+    public enum Tipo{
+        INSCRIBIR, ELIMINAR_ESTUDIANTE, REGISTRAR_NOTA
+    }
+    
+    private Tipo tipo;
+    private Estudiante estudiante;
+    private Materia materia;
+    
+    // Variables extra para las notas
+    private int semestreNota;
+    private int materiaNota;
+    private Double notaAnterior;
+    private double notaNueva;
+    
+//Constructor 1: Para cuando el camabio usa la materia (EJ: Inscribir)    
+public Cambio (Tipo tipo, Estudiante estudiante, Materia materia){
+    this.tipo = tipo;
+    this.estudiante = estudiante;
+    this.materia = materia;
+}    
+// Constructor 2: No considera materia para hacer un cambio (EJ: Eliminar estudiante)
+public Cambio(Tipo tipo, Estudiante estudiante){
+    this.tipo = tipo;
+    this.estudiante = estudiante;
+    this.materia = null;
+}
+
+// Constructor 3: Para registrar nota
+public Cambio(Tipo tipo, Estudiante estudiante, int semestre, int materia, Double notaAnterior, double notaNueva) {
+        this.tipo = tipo;
+        this.estudiante = estudiante;
+        this.semestreNota = semestre;
+        this.materiaNota = materia;
+        this.notaAnterior = notaAnterior;
+        this.notaNueva = notaNueva;
+    }
+
+//getters de cada uno
+public Tipo getTipo (){
+    return tipo;
+}
+
+public Estudiante getEstudiante (){
+    return estudiante;
+}
+
+public Materia getMateria(){
+    return materia;
+}
+
+public int getSemestreNota() {
+    return semestreNota; 
+}
+    public int getMateriaNota() { 
+    return materiaNota; 
+}
+    public Double getNotaAnterior() { 
+    return notaAnterior; 
+}
+    public double getNotaNueva() {
+    return notaNueva; 
+}
+}
